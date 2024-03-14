@@ -29,5 +29,13 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} \
           -d '{
             "message": "Delete sent file",
-            "sha": "$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" -H "User-Agent: ${{ github.actor }}" https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} | jq -r '.sha')"
+            "sha": "$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" -H "User-Agent: ${{ github.actor }}" https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} | jq -r '.sha')",
+            "committer": {
+              "name": "${{ github.actor }}",
+              "email": "your-email@example.com"
+            },
+            "author": {
+              "name": "${{ github.actor }}",
+              "email": "your-email@example.com"
+            }
           }'

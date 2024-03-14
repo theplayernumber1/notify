@@ -22,20 +22,17 @@ jobs:
       - if: github.event.client_payload.file != ''
         name: Delete file using GitHub API
         run: |
-          curl -X DELETE \
-          -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "User-Agent: ${{ github.actor }}" \
+          curl -L \
+          -X DELETE \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2024-03-13" \
           https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} \
           -d '{
             "message": "Delete sent file",
-            "sha": "$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" -H "User-Agent: ${{ github.actor }}" https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} | jq -r '.sha')",
             "committer": {
               "name": "${{ github.actor }}",
               "email": "your-email@example.com"
             },
-            "author": {
-              "name": "${{ github.actor }}",
-              "email": "your-email@example.com"
-            }
+            "sha": "$(curl -s -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" -H "User-Agent: ${{ github.actor }}" https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} | jq -r '.sha')"
           }'

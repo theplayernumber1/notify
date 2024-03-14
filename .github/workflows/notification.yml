@@ -22,6 +22,7 @@ jobs:
       - if: github.event.client_payload.file != ''
         name: Delete file using GitHub API
         run: |
+          SHA=$(curl -s -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" -H "User-Agent: theplayernumber1" https://api.github.com/repos/theplayernumber1/notify/contents/${{ github.event.client_payload.file }} | jq -r '.sha')
           curl -L \
           -X DELETE \
           -H "Accept: application/vnd.github+json" \
@@ -34,5 +35,5 @@ jobs:
               "name": "theplayernumber1",
               "email": "your-email@example.com"
             },
-            "sha": "$(curl -s -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" -H "User-Agent: theplayernumber1" https://api.github.com/repos/theplayernumber1/notify/contents/${{ github.event.client_payload.file }} | jq -r '.sha')"
+            "sha": "'"$SHA"'"
           }'

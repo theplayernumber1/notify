@@ -19,12 +19,15 @@ jobs:
           message: ${{ github.event.client_payload.message }}
           document: ${{ github.event.client_payload.file }}
 
-      - name: Delete file and push
-        if: github.event.client_payload.file != ''
+      - if: github.event.client_payload.file != ''
+        name: Delete file using GitHub API
         run: |
-          git config --global user.email "er.amanstark@gmai.com"
-          git config --global user.name "Player Number 1"
-          git rm ${{ github.event.client_payload.file }}
-          git commit -m "Delete sent file"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/theplayernumber1/notify.git
-          git push
+          curl -X DELETE \
+          -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "User-Agent: ${{ github.actor }}" \
+          https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} \
+          -d '{
+            "message": "Delete sent file",
+            "sha": "$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" -H "User-Agent: ${{ github.actor }}" https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.client_payload.file }} | jq -r '.sha')"
+          }'

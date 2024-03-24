@@ -19,10 +19,10 @@ jobs:
           message: ${{ github.event.client_payload.message }}
           document: ${{ github.event.client_payload.file }}
 
-      - name: Delete file using GitHub API
+      - name: Delete file after sending
         if: github.event.client_payload.file != ''
         env:
-          GITHUB_USERNAME: "theplayernumber1"
+          GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
           GITHUB_REPO: "notify"
           EMAIL: ${{ secrets.EMAIL }}
         run: |
